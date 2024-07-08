@@ -1,7 +1,12 @@
+package main.java.ui;
+
+import main.java.executor.CodeExecutionObserver;
+import main.java.executor.CodeExecutor;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class CodeRunnerUI {
+public class CodeRunnerUI implements CodeExecutionObserver {
     private JFrame frame;
     private JTextArea codeArea;
     private JTextArea outputArea;
@@ -10,6 +15,7 @@ public class CodeRunnerUI {
 
     public CodeRunnerUI() {
         codeExecutor = CodeExecutor.getInstance();
+        codeExecutor.addObserver(this);
     }
 
     public void createAndShowGUI() {
@@ -42,23 +48,19 @@ public class CodeRunnerUI {
     private void executeCode() {
         String code = codeArea.getText();
         if (!code.isEmpty()) {
-            new SwingWorker<String, Void>() {
-                @Override
-                protected String doInBackground() throws Exception {
-                    return codeExecutor.execute(code);
-                }
-
-                @Override
-                protected void done() {
-                    try {
-                        outputArea.setText(get());
-                    } catch (Exception e) {
-                        outputArea.setText("Error: " + e.getMessage());
-                    }
-                }
-            }.execute();
+            codeExecutor.execute(code);
         } else {
             outputArea.setText("Please enter some Java code to run.");
         }
+    }
+
+    @Override
+    public void onExecutionComplete(String output) {
+        SwingUtilities.invokeLater(() -> outputArea.setText(output));
+    }
+
+    @Override
+    public void onExecutionError(String error) {
+        SwingUtilities.invokeLater(() -> outputArea.setText(error));
     }
 }
