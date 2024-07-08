@@ -19,12 +19,10 @@ public class CodeRunnerUI implements CodeExecutionObserver {
     private JTextArea outputArea;
     private JButton runButton;
     private final CodeExecutor codeExecutor;
-    private string testStr = "teststr";
 
     public CodeRunnerUI() {
         codeExecutor = CodeExecutor.getInstance();
         codeExecutor.addObserver(this);
-        private string testStr2 = "teststr";
     }
 
     public void createAndShowGUI() {
