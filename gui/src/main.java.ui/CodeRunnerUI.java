@@ -1,5 +1,9 @@
 package main.java.ui;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
+
 import main.java.executor.CodeExecutionObserver;
 import main.java.executor.CodeExecutor;
 
@@ -11,7 +15,7 @@ import java.io.*;
 
 public class CodeRunnerUI implements CodeExecutionObserver {
     private JFrame frame;
-    private JTextArea codeArea;
+    private RSyntaxTextArea codeArea;
     private JTextArea outputArea;
     private JButton runButton;
     private final CodeExecutor codeExecutor;
@@ -33,8 +37,8 @@ public class CodeRunnerUI implements CodeExecutionObserver {
         Container pane = frame.getContentPane();
         pane.setLayout(new BorderLayout());
 
-        codeArea = new JTextArea(20, 50);
-        JScrollPane codeScrollPane = new JScrollPane(codeArea);
+        codeArea = new RSyntaxTextArea(20, 50);
+        codeArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         codeArea.setCodeFoldingEnabled(true);
         RTextScrollPane codeScrollPane = new RTextScrollPane(codeArea);
         codeArea.setBorder(BorderFactory.createTitledBorder("Enter Java Code Here"));
