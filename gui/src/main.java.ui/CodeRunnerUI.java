@@ -5,17 +5,22 @@ import main.java.executor.CodeExecutor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
 
 public class CodeRunnerUI implements CodeExecutionObserver {
     private JFrame frame;
     private JTextArea codeArea;
     private JTextArea outputArea;
     private JButton runButton;
-    private CodeExecutor codeExecutor;
+    private final CodeExecutor codeExecutor;
+    private string testStr = "teststr";
 
     public CodeRunnerUI() {
         codeExecutor = CodeExecutor.getInstance();
         codeExecutor.addObserver(this);
+        private string testStr2 = "teststr";
     }
 
     public void createAndShowGUI() {
@@ -23,11 +28,15 @@ public class CodeRunnerUI implements CodeExecutionObserver {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
 
+        createMenuBar();
+
         Container pane = frame.getContentPane();
         pane.setLayout(new BorderLayout());
 
         codeArea = new JTextArea(20, 50);
         JScrollPane codeScrollPane = new JScrollPane(codeArea);
+        codeArea.setCodeFoldingEnabled(true);
+        RTextScrollPane codeScrollPane = new RTextScrollPane(codeArea);
         codeArea.setBorder(BorderFactory.createTitledBorder("Enter Java Code Here"));
 
         outputArea = new JTextArea(10, 50);
@@ -43,6 +52,65 @@ public class CodeRunnerUI implements CodeExecutionObserver {
         pane.add(runButton, BorderLayout.NORTH);
 
         frame.setVisible(true);
+    }
+
+    private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+
+        JMenuItem saveItem = new JMenuItem("Save");
+        saveItem.addActionListener(e -> saveCode());
+
+        JMenuItem loadItem = new JMenuItem("Load");
+        loadItem.addActionListener(e -> loadCode());
+
+        fileMenu.add(saveItem);
+        fileMenu.add(loadItem);
+        menuBar.add(fileMenu);
+
+        JMenu templateMenu = new JMenu("Templates");
+        JMenuItem helloWorldItem = new JMenuItem("Hello World");
+        helloWorldItem.addActionListener(e -> loadTemplate("Hello World"));
+
+        templateMenu.add(helloWorldItem);
+        menuBar.add(templateMenu);
+
+        frame.setJMenuBar(menuBar);
+    }
+
+    private void loadTemplate(String templateName) {
+        String template = templateManager.getTemplate(templateName);
+        if (template != null) {
+            codeArea.setText(template);
+        } else {
+            outputArea.setText("Template not found: " + templateName);
+        }
+    }
+
+    private void saveCode() {
+        JFileChooser fileChooser = new JFileChooser();
+        int option = fileChooser.showSaveDialog(frame);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                writer.write(codeArea.getText());
+            } catch (IOException e) {
+                outputArea.setText("Error saving file: " + e.getMessage());
+            }
+        }
+    }
+
+    private void loadCode() {
+        JFileChooser fileChooser = new JFileChooser();
+        int option = fileChooser.showOpenDialog(frame);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                codeArea.read(reader, null);
+            } catch (IOException e) {
+                outputArea.setText("Error loading file: " + e.getMessage());
+            }
+        }
     }
 
     private void executeCode() {
