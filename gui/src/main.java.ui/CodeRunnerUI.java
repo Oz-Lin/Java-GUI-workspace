@@ -1,16 +1,13 @@
 package main.java.ui;
 
+import main.java.executor.CodeExecutionObserver;
+import main.java.executor.CodeExecutor;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import main.java.executor.CodeExecutionObserver;
-import main.java.executor.CodeExecutor;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 
 public class CodeRunnerUI implements CodeExecutionObserver {
@@ -19,10 +16,12 @@ public class CodeRunnerUI implements CodeExecutionObserver {
     private JTextArea outputArea;
     private JButton runButton;
     private final CodeExecutor codeExecutor;
+    private final TemplateManager templateManager;
 
     public CodeRunnerUI() {
         codeExecutor = CodeExecutor.getInstance();
         codeExecutor.addObserver(this);
+        templateManager = new TemplateManager();
     }
 
     public void createAndShowGUI() {

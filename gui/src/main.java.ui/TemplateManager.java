@@ -12,7 +12,7 @@ public class TemplateManager {
     }
 
     private void loadTemplates() {
-        templates.put("Hello World", "public class HelloWorld {\n" +
+        templates.put("Hello World", "public class TempCode {\n" +
                 "    public static void main(String[] args) {\n" +
                 "        System.out.println(\"Hello, World!\");\n" +
                 "    }\n" +
